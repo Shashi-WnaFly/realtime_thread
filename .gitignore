@@ -1,11 +1,11 @@
 node_modules/
-client/node_modules/
-server/node_modules/
+frontend/node_modules/
+backend/node_modules/
 
 # .env files
 .env
-client/.env
-server/.env
+frontend/.env
+backend/.env
 
 # build files
 dist/
