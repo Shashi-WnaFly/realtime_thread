@@ -1,0 +1,20 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: realtime_chat_and_threads_container
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: realtime_chat_and_threads_app
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "6450:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+       # what is this line doing? The line `- postgres_data:/var/lib/postgresql/data` under the `volumes` section in the `postgres` service is mounting the named volume `postgres_data` to the container's `/var/lib/postgresql/data` directory. This means that the PostgreSQL database files will be stored in the `postgres_data` volume, allowing the data to persist even if the container is stopped or removed.  
+
+volumes:
+   postgres_data:
+    # what is this line doing?The line `postgres_data:` under the `volumes` section in the `docker-compose.yaml` defines a named volume for the PostgreSQL data directory, ensuring that the database data persists even if the container is removed.
