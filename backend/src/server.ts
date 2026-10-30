@@ -6,9 +6,7 @@ import { assertDatabaseConnection } from "./db/db.js";
 
 async function bootstrap() {
   try {
-    console.log("hello")
     await assertDatabaseConnection();
-    console.log("hello2")
 
     const app = createApp();
     const server = http.createServer(app);
