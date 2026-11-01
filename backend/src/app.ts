@@ -4,6 +4,7 @@ import helmet from "helmet";
 import { notFoundErrorHandler } from "./middleware/notFoundErrorHandler.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { clerkMiddleware } from "./config/clerk.js";
+import { apiRouter } from "./routes/index.js";
 
 export function createApp() {
   const app = express();
@@ -17,6 +18,8 @@ export function createApp() {
     }),
   );
   app.use(express.json());
+
+  app.use("/api", apiRouter);
 
   app.use(notFoundErrorHandler);
   app.use(errorHandler);

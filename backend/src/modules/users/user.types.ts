@@ -1,3 +1,14 @@
+export type UserRow = {
+  id: number;
+  clerk_user_id: string;
+  bio: string | null;
+  avatar_url: string | null;
+  handle: string | null;
+  display_name: string | null;
+  created_at: Date;
+  updated_at: Date;
+};
+
 export type User = {
   id: number;
   clerkUserId: string;
