@@ -1,3 +1,4 @@
+import "dotenv/config"
 import { createApp } from "./app.js";
 import http from "node:http";
 import env from "./config/env.js";
@@ -11,12 +12,13 @@ async function bootstrap() {
     const app = createApp();
     const server = http.createServer(app);
     const port = Number(env.PORT) || 5000;
-
+  
 
     server.listen(port, () => {
       logger.info(`"Server is running on http://localhost:${port}`);
     });
   } catch (error) {
+    console.log(error);
     logger.error("Failed to start the server", (error as Error).message);
     process.exit(1);
   }

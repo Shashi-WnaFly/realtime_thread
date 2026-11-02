@@ -1,12 +1,12 @@
 import { Router } from "express";
 import {
   toUserProfileResponse,
-  UserProfile,
-  UserProfileResponse,
+  type UserProfile,
+  type UserProfileResponse,
 } from "../modules/users/user.types.js";
 import { getAuth } from "../config/clerk.js";
 
-export const userRouter = Router();
+const userRouter = Router();
 
 import z from "zod";
 import { UnauthorizedError } from "../lib/errors.js";
@@ -27,6 +27,7 @@ function toResponse(profile: UserProfile): UserProfileResponse {
 
 userRouter.get("/", async (req, res, next) => {
   try {
+    console.log("/api/me called");
     const auth = getAuth(req);
 
     if (!auth.userId) {
@@ -34,11 +35,13 @@ userRouter.get("/", async (req, res, next) => {
     }
 
     const profile = await getUserFromClerk(auth.userId);
-
+    const response = toResponse(profile);
     res.json({
-      data: toResponse(profile),
+      data: response,
     });
   } catch (error) {
     next(error);
   }
 });
+
+export default userRouter;
