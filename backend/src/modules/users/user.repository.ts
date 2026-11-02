@@ -28,7 +28,7 @@ export async function upsertUserFromClerkProfile(params: {
         DO UPDATE SET
             display_name = EXCLUDED.display_name
             avatar_url = EXCLUDED.avatar_url
-            update_at = NOW()
+            updated_at = NOW()
         RETURNING
             id,
             clerk_user_id,
