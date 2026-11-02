@@ -1,5 +1,5 @@
 import axios, {
-  AxiosRequestConfig,
+  type AxiosRequestConfig,
   type AxiosError,
   type AxiosInstance,
 } from "axios";
@@ -36,6 +36,11 @@ export async function apiGet<T>(
   url: string,
   config?: AxiosRequestConfig,
 ) {
-  const response = await client.get<{ data: T }>(url, config);
-  return response.data.data;
+  try {
+    const response = await client.get<{ data: T }>(url, config);
+
+    return response.data.data;
+  } catch (error: any) {
+    console.log(error);
+  }
 }
