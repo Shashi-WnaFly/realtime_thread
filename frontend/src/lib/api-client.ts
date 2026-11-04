@@ -14,15 +14,15 @@ export function createBrowserApiClient(
 
   client.interceptors.request.use(async (config) => {
     const token = await getToken();
-
     if (token) {
       config.headers = config.headers ?? {};
       config.headers.Authorization = `Bearer ${token}`;
     }
+
     return config;
   });
 
-  client.interceptors.request.use(
+  client.interceptors.response.use(
     (response) => response,
     (error: AxiosError) => {
       return Promise.reject(error);
@@ -36,11 +36,7 @@ export async function apiGet<T>(
   url: string,
   config?: AxiosRequestConfig,
 ) {
-  try {
-    const response = await client.get<{ data: T }>(url, config);
-
-    return response.data.data;
-  } catch (error: any) {
-    console.log(error);
-  }
+  const response = await client.get<{ data: T }>(url, config);
+  console.log(response);
+  return response.data.data;
 }

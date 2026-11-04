@@ -37,6 +37,7 @@ export default function profilePage() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [profileError, setProfileError] = useState<string | null>(null);
 
   const apiClient = useMemo(() => createBrowserApiClient(getToken), [getToken]);
 
@@ -51,15 +52,14 @@ export default function profilePage() {
   });
 
   useEffect(() => {
-    const isMounted = true;
+    let isMounted = true;
 
-    try {
+    async function loadProfile() {
       setIsLoading(true);
-      async function loadProfile() {
+      setProfileError(null);
+      try {
         const user = await apiGet<UserResponse>(apiClient, "/api/me");
-
-        console.log("load profile ", user);
-
+        
         if (!isMounted) {
           return;
         }
@@ -70,18 +70,30 @@ export default function profilePage() {
           handle: user?.handle ?? "",
           avatarUrl: user?.avatarUrl ?? "",
         });
-      }
-
-      loadProfile();
-    } catch (err: any) {
-      console.log(err);
-    }
-    finally{
-        if(isMounted){
-            setIsLoading(false);
+      } catch (error) {
+        console.error("Failed to load profile", error);
+        if (isMounted) {
+          setProfileError("Unable to load your profile. Please try again.");
         }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
     }
+
+    void loadProfile();
+
+    return () => {
+      isMounted = false;
+    };
   }, [apiClient, form]);
 
-  return <div>profilePage</div>;
+  return (
+    <div>
+      {isLoading
+        ? "Loading profile..."
+        : profileError ?? "profilePage"}
+    </div>
+  );
 }

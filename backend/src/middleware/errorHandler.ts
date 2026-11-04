@@ -21,8 +21,10 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
       }))));
   }
 
+  const errorDetails =
+    err instanceof Error ? (err.stack ?? err.message) : String(err);
   logger.error(
-    `${req.method} ${req.originalUrl} --> ${status} - ${message}`,
+    `${req.method} ${req.originalUrl} --> ${status} - ${message}\n${errorDetails}`,
   );
 
   res.status(status).json({
