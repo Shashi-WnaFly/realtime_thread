@@ -1,5 +1,8 @@
 import { clerkClient } from "../../config/clerk.js";
-import { upsertUserFromClerkProfile } from "./user.repository.js";
+import {
+  repoUpdateUserProfile,
+  upsertUserFromClerkProfile,
+} from "./user.repository.js";
 import { UserProfile } from "./user.types.js";
 
 async function fetchClerkProfile(clerkUserId: string) {
@@ -34,6 +37,32 @@ export async function getUserFromClerk(
 
   return {
     user,
+    clerkEmail: email,
+    clerkFullName: fullName,
+  };
+}
+
+export async function updateUserProfile(params: {
+  clerkUserId: string;
+  displayName?: string;
+  bio?: string;
+  handle?: string;
+  avatarUrl?: string;
+}): Promise<UserProfile> {
+  const { clerkUserId, displayName, bio, handle, avatarUrl } = params;
+
+  const updatedUser = await repoUpdateUserProfile({
+    clerkUserId,
+    displayName,
+    bio,
+    handle,
+    avatarUrl,
+  });
+
+  const { fullName, email } = await fetchClerkProfile(clerkUserId);
+
+  return {
+    user: updatedUser,
     clerkEmail: email,
     clerkFullName: fullName,
   };

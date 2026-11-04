@@ -37,6 +37,6 @@ export async function apiGet<T>(
   config?: AxiosRequestConfig,
 ) {
   const response = await client.get<{ data: T }>(url, config);
-  console.log(response);
+  
   return response.data.data;
 }
