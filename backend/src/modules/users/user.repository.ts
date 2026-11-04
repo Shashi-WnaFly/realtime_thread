@@ -26,21 +26,78 @@ export async function upsertUserFromClerkProfile(params: {
         VALUES ($1, $2, $3)
         ON CONFLICT (clerk_user_id)
         DO UPDATE SET
-            display_name = EXCLUDED.display_name,
-            avatar_url = EXCLUDED.avatar_url,
-            updated_at = NOW()
+          display_name = EXCLUDED.display_name,
+          avatar_url = EXCLUDED.avatar_url,
+          updated_at = NOW()
         RETURNING
-            id,
-            clerk_user_id,
-            display_name,
-            handle,
-            avatar_url,
-            bio,
-            created_at,
-            updated_at
+          id,
+          clerk_user_id,
+          display_name,
+          handle,
+          avatar_url,
+          bio,
+          created_at,
+          updated_at
         `,
     [clerkUserId, displayName, avatarUrl],
   );
+
+  return hydrateUser(result.rows[0]);
+}
+
+export async function repoUpdateUserProfile(params: {
+  clerkUserId: string;
+  displayName?: string;
+  bio?: string;
+  handle?: string;
+  avatarUrl?: string;
+}): Promise<User> {
+  const { clerkUserId, displayName, bio, handle, avatarUrl } = params;
+
+  const updateKeys: string[] = [];
+  const updateValues: unknown[] = [clerkUserId]; // $1 is always the clerk_user_id (used in WHERE clause)
+  let idx = 2; // for query $2 $3
+
+  if (typeof displayName !== undefined) {
+    updateKeys.push(`display_name = $${idx++}`);
+    updateValues.push(displayName);
+  }
+  if (typeof bio !== undefined) {
+    updateKeys.push(`bio = $${idx++}`);
+    updateValues.push(bio);
+  }
+  if (typeof avatarUrl !== undefined) {
+    updateKeys.push(`avatarUrl = $${idx++}`);
+    updateValues.push(avatarUrl);
+  }
+  if (typeof handle !== undefined) {
+    updateKeys.push(`handle = $${idx++}`);
+    updateValues.push(handle);
+  }
+
+  updateKeys.push(`updated_at = NOW()`);
+
+  const result = await query<UserRow>(
+    `
+      UPDATE users
+      SET ${updateKeys.join(" ")}
+      WHERE clerk_user_id = $1
+      RETURNING
+        id,
+        clerk_user_id,
+        display_name,
+        handle,
+        avatar_url,
+        bio,
+        created_at,
+        updated_at
+    `,
+    updateValues,
+  );
+
+  if (result.rows.length === 0) {
+    throw new Error(`no user found for clerk user id = ${clerkUserId}`);
+  }
 
   return hydrateUser(result.rows[0]);
 }
