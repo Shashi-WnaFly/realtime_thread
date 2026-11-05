@@ -10,7 +10,10 @@ const userRouter = Router();
 
 import z from "zod";
 import { UnauthorizedError } from "../lib/errors.js";
-import { getUserFromClerk, updateUserProfile } from "../modules/users/user.service.js";
+import {
+  getUserFromClerk,
+  updateUserProfile,
+} from "../modules/users/user.service.js";
 
 const UserProfileUpdateSchema = z.object({
   displayName: z.string().trim().optional(),
@@ -46,7 +49,7 @@ userRouter.get("/", async (req, res, next) => {
 
 // user update /me
 
-userRouter.patch("/", async (req, res, next) => {
+userRouter.patch("/", async (req, _res, next) => {
   try {
     const auth = getAuth(req);
 
@@ -62,18 +65,15 @@ userRouter.patch("/", async (req, res, next) => {
         ? updateProperty.displayName?.trim()
         : undefined;
     const bio =
-      updateProperty.bio &&
-      updateProperty.bio?.trim().length > 0
+      updateProperty.bio && updateProperty.bio?.trim().length > 0
         ? updateProperty.bio?.trim()
         : undefined;
     const avatarUrl =
-      updateProperty.avatarUrl &&
-      updateProperty.avatarUrl?.trim().length > 0
+      updateProperty.avatarUrl && updateProperty.avatarUrl?.trim().length > 0
         ? updateProperty.avatarUrl?.trim()
         : undefined;
     const handle =
-      updateProperty.handle &&
-      updateProperty.handle?.trim().length > 0
+      updateProperty.handle && updateProperty.handle?.trim().length > 0
         ? updateProperty.handle?.trim()
         : undefined;
 
@@ -81,8 +81,10 @@ userRouter.patch("/", async (req, res, next) => {
       const profile = await updateUserProfile({
         clerkUserId: auth.userId,
         displayName,
-        bio, handle, avatarUrl
-      })
+        bio,
+        handle,
+        avatarUrl,
+      });
 
       return toResponse(profile);
     } catch (e) {

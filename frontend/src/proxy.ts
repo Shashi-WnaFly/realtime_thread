@@ -1,6 +1,22 @@
 import { clerkMiddleware } from '@clerk/nextjs/server';
 
-export default clerkMiddleware();
+const isPublicRoute = (pathname: string) =>
+  ['/sign-in', '/sign-up'].some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`),
+  );
+
+const isApiRoute = (pathname: string) =>
+  ['/api', '/trpc'].some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`),
+  );
+
+export default clerkMiddleware(async (auth, request) => {
+  const { pathname } = request.nextUrl;
+
+  if (!isApiRoute(pathname) && !isPublicRoute(pathname)) {
+    await auth.protect({ unauthenticatedUrl: '/sign-in' });
+  }
+});
 
 export const config = {
   matcher: [
