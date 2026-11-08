@@ -30,7 +30,6 @@ function toResponse(profile: UserProfile): UserProfileResponse {
 
 userRouter.get("/", async (req, res, next) => {
   try {
-    console.log("/api/me called");
     const auth = getAuth(req);
 
     if (!auth.userId) {
@@ -49,7 +48,7 @@ userRouter.get("/", async (req, res, next) => {
 
 // user update /me
 
-userRouter.patch("/", async (req, _res, next) => {
+userRouter.patch("/", async (req, res, next) => {
   try {
     const auth = getAuth(req);
 
@@ -85,8 +84,10 @@ userRouter.patch("/", async (req, _res, next) => {
         handle,
         avatarUrl,
       });
-
-      return toResponse(profile);
+      const response = toResponse(profile);
+      res.json({
+        data: response,
+      });
     } catch (e) {
       throw e;
     }

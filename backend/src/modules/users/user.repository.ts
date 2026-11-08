@@ -67,7 +67,7 @@ export async function repoUpdateUserProfile(params: {
     updateValues.push(bio);
   }
   if (typeof avatarUrl !== undefined) {
-    updateKeys.push(`avatarUrl = $${idx++}`);
+    updateKeys.push(`avatar_url = $${idx++}`);
     updateValues.push(avatarUrl);
   }
   if (typeof handle !== undefined) {
@@ -80,7 +80,7 @@ export async function repoUpdateUserProfile(params: {
   const result = await query<UserRow>(
     `
       UPDATE users
-      SET ${updateKeys.join(" ")}
+      SET ${updateKeys.join(", ")}
       WHERE clerk_user_id = $1
       RETURNING
         id,
