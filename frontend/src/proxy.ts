@@ -14,7 +14,9 @@ export default clerkMiddleware(async (auth, request) => {
   const { pathname } = request.nextUrl;
 
   if (!isApiRoute(pathname) && !isPublicRoute(pathname)) {
-    await auth.protect({ unauthenticatedUrl: '/sign-in' });
+    await auth.protect({
+      unauthenticatedUrl: new URL('/sign-in', request.url).toString(),
+    });
   }
 });
 
