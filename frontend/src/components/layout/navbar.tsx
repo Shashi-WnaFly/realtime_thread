@@ -81,12 +81,23 @@ function navbar() {
           <button
             type="button"
             onClick={() => setMobileMenuOpen((open) => !open)}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full border-sidebar-border bg-sidebar-accent text-muted-foreground transition-colors md:hidden"
-          >{
-            mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />
-          }</button>
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-sidebar-border bg-sidebar-accent text-muted-foreground transition-colors md:hidden"
+          >
+            {mobileMenuOpen ? (
+              <X className="w-4 h-4" />
+            ) : (
+              <Menu className="w-4 h-4" />
+            )}
+          </button>
         </div>
       </div>
+      {mobileMenuOpen && (
+        <div className="border-t border-sidebar-border bg-sidebar/90 md:hidden">
+          <nav className="mx-auto flex max-w-6xl flex-col gap-1 px-4 pb-4 pt-2">
+            {navItems.map(renderNavLinks)}
+          </nav>
+        </div>
+      )}
     </header>
   );
 }
