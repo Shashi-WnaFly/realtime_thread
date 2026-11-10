@@ -22,11 +22,11 @@ async function runMigrations() {
     const fullPath = path.join(migrationDir, file);
     const sql = fs.readFileSync(fullPath, "utf8");
 
-    logger.info("Running migrations");
+    logger.info(`Running migration ${file}`);
 
     await query(sql);
 
-    logger.info("Finished migrations");
+    logger.info(`Finished migration ${file}`);
   }
 }
 
@@ -36,6 +36,8 @@ runMigrations()
     process.exit(0);
   })
   .catch((err) => {
-    logger.info(`Migrations failed ${(err as Error).message}`);
+    logger.error(
+      `Migrations failed: ${err instanceof Error ? err.stack ?? err.message : String(err)}`,
+    );
     process.exit(1);
   });
