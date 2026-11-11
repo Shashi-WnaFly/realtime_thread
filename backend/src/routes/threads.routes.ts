@@ -1,8 +1,10 @@
 import { Router } from "express";
 import {
   createdThread,
+  extractListOfThreads,
   getThreadById,
   listCategories,
+  parseThreadListFilter,
 } from "../modules/threads/threads.repository.js";
 import { getAuth } from "../config/clerk.js";
 import { BadRequestError, UnauthorizedError } from "../lib/errors.js";
@@ -77,6 +79,27 @@ threadsRouter.get("/threads/:threadId", async (req, res, next) => {
 
     res.json({
       data: thread,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+threadsRouter.get("/threads", async (req, res, next) => {
+  try {
+    const { page, pageSize, q, category, sort } = req.query;
+    const filter = parseThreadListFilter({
+      page,
+      pageSize,
+      q,
+      category,
+      sort,
+    });
+
+    const threadsList = extractListOfThreads(filter);
+
+    res.json({
+      data: threadsList,
     });
   } catch (error) {
     next(error);
