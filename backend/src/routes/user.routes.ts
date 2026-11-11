@@ -19,7 +19,7 @@ const UserProfileUpdateSchema = z.object({
   displayName: z.string().trim().optional(),
   handle: z.string().trim().optional(),
   bio: z.string().trim().optional(),
-  avatarUrl: z.url(),
+  avatarUrl: z.url().optional(),
 });
 
 function toResponse(profile: UserProfile): UserProfileResponse {

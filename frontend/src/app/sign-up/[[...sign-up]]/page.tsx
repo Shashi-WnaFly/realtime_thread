@@ -16,16 +16,6 @@ export default async function SignUpPage() {
             />
           </Suspense>
         </div>
-        {/* <p className="mt-8 text-xs text-center hover:underline text-muted-foreground">
-          Already have an account?
-          <Link
-            className="font-medium text-primary hover:text-primary/90"
-            href={"/sign-in"}
-          >
-            {" "}
-            Sign In
-          </Link>
-        </p> */}
       </div>
     </div>
   );

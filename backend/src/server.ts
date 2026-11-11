@@ -1,4 +1,3 @@
-import "dotenv/config"
 import { createApp } from "./app.js";
 import http from "node:http";
 import env from "./config/env.js";
