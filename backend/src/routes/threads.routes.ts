@@ -1,7 +1,11 @@
 import { Router } from "express";
-import { createdThread, listCategories } from "../modules/threads/threads.repository.js";
+import {
+  createdThread,
+  getThreadById,
+  listCategories,
+} from "../modules/threads/threads.repository.js";
 import { getAuth } from "../config/clerk.js";
-import { UnauthorizedError } from "../lib/errors.js";
+import { BadRequestError, UnauthorizedError } from "../lib/errors.js";
 import { z } from "zod";
 import { getUserFromClerk } from "../modules/users/user.service.js";
 
@@ -46,6 +50,33 @@ threadsRouter.post("/threads", async (req, res, next) => {
 
     res.status(201).json({
       data: newlyCreatedThread,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+threadsRouter.get("/threads/:threadId", async (req, res, next) => {
+  try {
+    const threadId = Number(req.params.threadId);
+
+    if (!Number.isInteger(threadId) || threadId <= 0) {
+      throw new BadRequestError("Invalid thread id");
+    }
+
+    const auth = getAuth(req);
+
+    if (!auth.userId) {
+      throw new UnauthorizedError("Unauthorized");
+    }
+
+    // const profile = await getUserFromClerk(auth.userId);
+    // const viewerUserId = profile.user.id;
+
+    const thread = await getThreadById(threadId);
+
+    res.json({
+      data: thread,
     });
   } catch (error) {
     next(error);
