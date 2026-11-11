@@ -12,6 +12,22 @@ export type CategoryRow = {
   description: string | null;
 };
 
+export type ThreadDetail = {
+  id: number;
+  title: string;
+  body: string;
+  createdAt: Date;
+  updatedAt: Date;
+  category: {
+    slug: string;
+    name: string;
+  };
+  author: {
+    displayName: string | null;
+    handle: string | null;
+  };
+};
+
 export function mapCategoryRow(row: CategoryRow): Category {
   return {
     id: row.id,

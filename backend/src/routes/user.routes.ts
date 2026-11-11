@@ -8,7 +8,7 @@ import { getAuth } from "../config/clerk.js";
 
 const userRouter = Router();
 
-import z from "zod";
+import {z} from "zod";
 import { UnauthorizedError } from "../lib/errors.js";
 import {
   getUserFromClerk,
