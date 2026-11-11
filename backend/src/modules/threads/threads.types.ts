@@ -40,6 +40,40 @@ export type ThreadDetailRow = {
   author_display_name: string | null;
 };
 
+export type ThreadListFilter = {
+  page: number;
+  pageSize: number;
+  categorySlug?: string;
+  search?: string;
+  sort: "new" | "old";
+};
+
+export type ThreadSummary = {
+  id: number;
+  title: string;
+  excerpt: string;
+  createdAt: Date;
+  category: {
+    slug: string;
+    name: string;
+  };
+  author: {
+    displayName: string | null;
+    handle: string | null;
+  };
+};
+
+export type ThreadSummaryRow = {
+  id: number;
+  title: string;
+  excerpt: string;
+  created_at: Date;
+  category_slug: string;
+  category_name: string;
+  author_display_name: string | null;
+  author_handle: string | null;
+};
+
 export function mapCategoryRow(row: CategoryRow): Category {
   return {
     id: row.id,
@@ -56,6 +90,23 @@ export function mapThreadDetailRow(row: ThreadDetailRow): ThreadDetail {
     body: row.body,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
+    category: {
+      slug: row.category_slug,
+      name: row.category_name,
+    },
+    author: {
+      displayName: row.author_display_name,
+      handle: row.author_handle,
+    },
+  };
+}
+
+export function mapThreadSummaryRow(row: ThreadSummaryRow): ThreadSummary {
+  return {
+    id: row.id,
+    title: row.title,
+    excerpt: row.excerpt,
+    createdAt: row.created_at,
     category: {
       slug: row.category_slug,
       name: row.category_name,
