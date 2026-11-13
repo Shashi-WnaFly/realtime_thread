@@ -75,10 +75,10 @@ function NewThreadPage() {
 
   async function onThreadSubmit(values: NewThreadFormValues) {
     setIsSubmitting(true);
-    const curCategory = categories.filter(
+    const curCategory = categories.find(
       (cat) => cat.name === values.categorySlug,
     );
-    values.categorySlug = curCategory[0].slug;
+    values.categorySlug = curCategory?.slug as string;
 
     async function createNewThread() {
       try {
@@ -88,13 +88,11 @@ function NewThreadPage() {
           values,
         );
 
-        console.log(thread);
-
         toast.success("New thread created successfully", {
           description: "Your thread is now live!",
         });
 
-        // router.push("/");
+        router.push("/");
       } catch (error) {
         console.log(error);
       } finally {
