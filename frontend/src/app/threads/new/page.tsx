@@ -1,5 +1,5 @@
 "use client";
-import { Category } from "@/app/types/thread";
+import { Category, ThreadDetail } from "@/app/types/thread";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,11 +10,13 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { apiGet, createBrowserApiClient } from "@/lib/api-client";
+import { apiGet, apiPost, createBrowserApiClient } from "@/lib/api-client";
 import { useAuth } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 const newThreadSchema = z.object({
@@ -29,6 +31,7 @@ function NewThreadPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
 
   const { getToken } = useAuth();
   const apiClient = useMemo(() => createBrowserApiClient(getToken), [getToken]);
@@ -58,7 +61,7 @@ function NewThreadPage() {
         setCategories(loadCats);
 
         if (loadCats.length > 0) {
-          form.setValue("categorySlug", loadCats[0].slug);
+          form.setValue("categorySlug", loadCats[0].name);
         }
       } catch (error) {
         console.log(error);
@@ -71,14 +74,27 @@ function NewThreadPage() {
   }, [apiClient, form]);
 
   async function onThreadSubmit(values: NewThreadFormValues) {
-    console.log(values);
     setIsSubmitting(true);
-    function createNewThread() {
+    const curCategory = categories.filter(
+      (cat) => cat.name === values.categorySlug,
+    );
+    values.categorySlug = curCategory[0].slug;
+
+    async function createNewThread() {
       try {
-        console.log(isSubmitting);
-        const thread = newThreadSchema.parse(values);
+        const thread = await apiPost<typeof values, ThreadDetail>(
+          apiClient,
+          "/api/threads/create",
+          values,
+        );
 
         console.log(thread);
+
+        toast.success("New thread created successfully", {
+          description: "Your thread is now live!",
+        });
+
+        // router.push("/");
       } catch (error) {
         console.log(error);
       } finally {
@@ -89,7 +105,7 @@ function NewThreadPage() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 px-4 py8">
+    <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 px-4 py-8">
       <div className="space-y-2">
         <h1 className="text-3xl font-bold tracking-tight text-foreground">
           Start a new Thread
@@ -158,17 +174,17 @@ function NewThreadPage() {
                 className=" mt-2 border-border bg-background/70 text-sm"
               />
             </div>
+            <CardFooter className="flex justify-end px-0 pt-5 border-t border-border">
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer"
+              >
+                {isSubmitting ? "Submitting..." : "Publish Thread"}
+              </Button>
+            </CardFooter>
           </form>
         </CardContent>
-        <CardFooter className="flex justify-end px-0 pt-5 border-t border-border">
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer"
-          >
-            {isSubmitting ? "Submitting..." : "Publish Thread"}
-          </Button>
-        </CardFooter>
       </Card>
     </div>
   );
