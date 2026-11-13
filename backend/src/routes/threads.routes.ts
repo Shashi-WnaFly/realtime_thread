@@ -96,8 +96,9 @@ threadsRouter.get("/threads", async (req, res, next) => {
       sort,
     });
 
-    const threadsList = extractListOfThreads(filter);
-
+    
+    const threadsList = await extractListOfThreads(filter);
+    
     res.json({
       data: threadsList,
     });
